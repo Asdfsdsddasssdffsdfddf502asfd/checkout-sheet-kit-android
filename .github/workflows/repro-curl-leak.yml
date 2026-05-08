@@ -8,13 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Reproduce curl verbose header logging
-        env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         run: |
-          printf '%s' "$OSSRH_USERNAME:$OSSRH_PASSWORD" | base64 -w0 > token.txt
-          read -r TOKEN < token.txt
+          OSSRH_USERNAME="dummy_user_12345"
+          OSSRH_PASSWORD="dummy_pass_67890"
+          TOKEN=$(printf '%s' "$OSSRH_USERNAME:$OSSRH_PASSWORD" | base64 -w0)
 
+          echo "TOKEN=$TOKEN"
           curl -v -X POST \
             -H "Authorization: Bearer $TOKEN" \
             https://example.com/manual/upload/repository/test-repo || true
