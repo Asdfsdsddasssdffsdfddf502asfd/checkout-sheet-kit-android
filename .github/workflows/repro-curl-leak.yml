@@ -7,11 +7,14 @@ jobs:
   repro:
     runs-on: ubuntu-latest
     steps:
-      - name: Reproduce derived token leak in curl verbose logs
+      - name: Reproduce curl verbose header logging
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         run: |
-          TOKEN=*** -n "${{ secrets.OSSRH_USERNAME }}:${{ secrets.OSSRH_PASSWORD }}" | base64)
+          printf '%s' "$OSSRH_USERNAME:$OSSRH_PASSWORD" | base64 -w0 > token.txt
+          read -r TOKEN < token.txt
 
-          echo "Running curl -v with derived Authorization header"
           curl -v -X POST \
             -H "Authorization: Bearer $TOKEN" \
             https://example.com/manual/upload/repository/test-repo || true
