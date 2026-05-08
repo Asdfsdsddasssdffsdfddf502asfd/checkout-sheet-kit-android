@@ -1,0 +1,17 @@
+name: Repro curl verbose credential leak
+
+on:
+  workflow_dispatch:
+
+jobs:
+  repro:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reproduce derived token leak in curl verbose logs
+        run: |
+          TOKEN=*** -n "${{ secrets.OSSRH_USERNAME }}:${{ secrets.OSSRH_PASSWORD }}" | base64)
+
+          echo "Running curl -v with derived Authorization header"
+          curl -v -X POST \
+            -H "Authorization: Bearer $TOKEN" \
+            https://example.com/manual/upload/repository/test-repo || true
